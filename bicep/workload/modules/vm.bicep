@@ -76,3 +76,4 @@ resource customScript 'Microsoft.Compute/virtualMachines/extensions@2023-09-01' 
 }
 
 output vmId string = vm.id
+output storageName string = storageNameOut

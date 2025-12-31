@@ -1,0 +1,84 @@
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AZURE_LOCATION: eastus
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  validate-foundation:
+    name: Validate Foundation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Bicep
+        run: |
+          az bicep install
+          export PATH=$HOME/.azure/bin:$PATH
+
+      - name: Build Foundation
+        run: |
+          bicep build ./bicep/foundation/main.bicep \
+            --outdir ./bicep/compiled/foundation
+
+  validate-workload:
+    name: Validate Workload
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Bicep
+        run: |
+          az bicep install
+          export PATH=$HOME/.azure/bin:$PATH
+
+      - name: Build Workload
+        run: |
+          bicep build ./bicep/workload/main.bicep \
+            --outdir ./bicep/compiled/workload
+
+  whatif-foundation:
+    name: What-If Foundation
+    runs-on: ubuntu-latest
+    needs: validate-foundation
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: What-If Foundation
+        run: |
+          az deployment sub what-if \
+            --location $AZURE_LOCATION \
+            --template-file ./bicep/compiled/foundation/main.json
+
+  whatif-workload:
+    name: What-If Workload
+    runs-on: ubuntu-latest
+    needs: validate-workload
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: What-If Workload
+        run: |
+          az deployment group what-if \
+            --resource-group rg-workload-dev \
+            --template-file ./bicep/compiled/workload/main.json
