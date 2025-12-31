@@ -63,7 +63,7 @@ jobs:
         run: |
           az deployment sub what-if \
             --location $AZURE_LOCATION \
-            --template-file ./bicep/compiled/foundation/main.json
+            --template-file ./bicep/foundation/main.json
 
   whatif-workload:
     name: What-If Workload
@@ -83,5 +83,5 @@ jobs:
         run: |
           az deployment group what-if \
             --resource-group rg-workload-dev \
-            --template-file ./bicep/compiled/workload/main.json
+            --template-file ./bicep/workload/main.json
     
