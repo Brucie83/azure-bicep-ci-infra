@@ -61,7 +61,8 @@ jobs:
 
       - name: What-If Foundation
         run: |
-          az deployment sub what-if \
+          az deployment group what-if \
+            --resource-group rg-foundation-dev \
             --location $AZURE_LOCATION \
             --template-file ./bicep/foundation/main.bicep
 
