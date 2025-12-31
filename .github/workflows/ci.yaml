@@ -1,3 +1,5 @@
+name: CI Pipeline w/ Bicep and Azure What-If + OIDC
+
 on:
   push:
     branches:
