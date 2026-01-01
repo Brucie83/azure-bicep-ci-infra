@@ -10,7 +10,7 @@ param location string = resourceGroup().location
 
 param nsgName string = 'foundation-nsg'
 
-param keyvaultName string = 'kv-shared-core'
+param keyvaultName string = 'kv-foundation-${uniqueString(resourceGroup().id)}'
 
 module nsgModule 'modules/nsg-baseline.bicep' = {
   name: 'nsgDeployment'
