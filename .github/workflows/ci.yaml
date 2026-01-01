@@ -30,6 +30,7 @@ jobs:
   validate-workload:
     name: Validate Workload
     runs-on: ubuntu-latest
+    needs: validate-foundation
     steps:
       - uses: actions/checkout@v4
 
@@ -48,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: validate-foundation
     outputs:
-      subnetId: ${{ steps.capture-foundation-outputs.outputs.subnetId }}
+      subnetId: ${{ steps.foundation-outputs.outputs.subnetId }}
     steps:
       - uses: actions/checkout@v4
 
@@ -62,16 +63,26 @@ jobs:
       - name: What-If Foundation
         run: |
           az deployment group what-if \
+            --name foundation \
             --resource-group rg-foundation-dev \
             --template-file ./bicep/foundation/main.bicep
 
+      - name: Deploy Foundation
+        run: |
+          az deployment group create \
+          --name foundation \
+          --resource-group rg-foundation-dev \
+          --template-file bicep/foundation/main.bicep
+
+
       - name: Capture Foundation Outputs
+        id: foundation-outputs
         run: |
           SUBNET_ID=$(az deployment group show \
           --resource-group rg-foundation-dev \
           --name foundation \
           --query properties.outputs.subnetId.value -o tsv)
-          echo "SUBNET_ID=$SUBNET_ID" >> $GITHUB_OUTPUT
+          echo "subnetId=$SUBNET_ID" >> $GITHUB_OUTPUT
 
 
   whatif-workload:
