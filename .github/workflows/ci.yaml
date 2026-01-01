@@ -110,4 +110,5 @@ jobs:
             --parameters subnetId="${{ needs.whatif-foundation.outputs.subnetId }}" \
             --parameters publicIpId='' \
             --parameters adminPassword="${{ secrets.ADMIN_PASSWORD }}"
+        
 
