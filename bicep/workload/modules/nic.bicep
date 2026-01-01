@@ -25,7 +25,7 @@ resource nic 'Microsoft.Network/networkInterfaces@2023-05-01' = {
           subnet: {
             id: subnetId
           }
-          privateIPAllocationMethod: 'Static'
+          privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: empty(publicIpId) ? null : {
             id: publicIpId
           }

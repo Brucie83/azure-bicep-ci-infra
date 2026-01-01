@@ -43,7 +43,7 @@ module vmModule 'modules/vm.bicep' = {
   name: 'deployVm-${vmName}'
   params: {
     vmName: vmName
-    vmSize: 'Standard_DS2_v2'
+    vmSize: 'Standard_B2s'
     storageNameOut: storageNameOut
     nicId: nicModule.outputs.nicId
     location: location
