@@ -10,7 +10,6 @@ param location string = resourceGroup().location
 
 param nsgName string = 'foundation-nsg'
 
-param keyvaultName string = 'kv-foundation-${uniqueString(resourceGroup().id)}'
 
 module nsgModule 'modules/nsg-baseline.bicep' = {
   name: 'nsgDeployment'
@@ -29,6 +28,10 @@ module vnetModule 'modules/vnet.bicep' = {
     location: location
   }
 }
+
+var kvSuffix = substring(uniqueString(resourceGroup().id), 0, 8)
+var keyvaultName = 'kvfd${kvSuffix}'
+
 
 module keyvaultModule 'modules/keyvault.bicep' = {
   name: 'kvDeployment'
