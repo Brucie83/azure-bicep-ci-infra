@@ -1,1 +1,2 @@
-*.json
+*.secret.json
+keyvault.json

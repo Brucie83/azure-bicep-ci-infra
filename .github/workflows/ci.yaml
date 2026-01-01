@@ -106,7 +106,7 @@ jobs:
           az deployment group what-if \
             --resource-group rg-workload-dev \
             --template-file ./bicep/workload/main.bicep \
-            --parameters bicep/workload/parameters.dev.json \
+            --parameters @bicep/workload/parameters.dev.json \
             --parameters subnetId="${{ needs.whatif-foundation.outputs.subnetId }}" \
             --parameters publicIpId='' \
             --parameters adminPassword="${{ secrets.ADMIN_PASSWORD }}"
