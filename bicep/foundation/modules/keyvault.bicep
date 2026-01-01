@@ -1,4 +1,4 @@
-param keyvaultName string = 'kv-shared-core'
+param keyvaultName string = 'kv-foundation-dev-${uniqueString(resourceGroup().id)}'
 param location string
 
 resource keyvault 'Microsoft.KeyVault/vaults@2023-07-01' = {
