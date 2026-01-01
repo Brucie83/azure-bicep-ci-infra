@@ -8,6 +8,7 @@ resource keyvault 'Microsoft.KeyVault/vaults@2023-07-01' = {
     tenantId: subscription().tenantId
     enableRbacAuthorization: true
     enablePurgeProtection: true
+    softDeleteRetentionInDays: 7
     sku: {
       family: 'A'
       name: 'standard'
