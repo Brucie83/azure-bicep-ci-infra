@@ -47,6 +47,8 @@ jobs:
     name: What-If Foundation
     runs-on: ubuntu-latest
     needs: validate-foundation
+    outputs:
+      subnetId: ${{ steps.capture-foundation-outputs.outputs.subnetId }}
     steps:
       - uses: actions/checkout@v4
 
@@ -63,10 +65,21 @@ jobs:
             --resource-group rg-foundation-dev \
             --template-file ./bicep/foundation/main.bicep
 
+      - name: Capture Foundation Outputs
+        run: |
+          SUBNET_ID=$(az deployment group show \
+          --resource-group rg-foundation-dev \
+          --name foundation \
+          --query properties.outputs.subnetId.value -o tsv)
+          echo "SUBNET_ID=$SUBNET_ID" >> $GITHUB_OUTPUT
+
+
   whatif-workload:
     name: What-If Workload
     runs-on: ubuntu-latest
-    needs: validate-workload
+    needs:
+      - validate-workload
+      - whatif-foundation
     steps:
       - uses: actions/checkout@v4
 
@@ -81,4 +94,9 @@ jobs:
         run: |
           az deployment group what-if \
             --resource-group rg-workload-dev \
-            --template-file ./bicep/workload/main.bicep
+            --template-file ./bicep/workload/main.bicep \
+            --parameters @bicep/workload/parameters.dev.json \
+            --parameters subnetId="${{ needs.whatif-foundation.outputs.subnetId }}" \
+            --parameters publicIpId='' \
+            --parameters adminPassword="${{ secrets.ADMIN_PASSWORD }}"
+

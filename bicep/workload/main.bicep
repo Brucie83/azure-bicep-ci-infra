@@ -24,7 +24,7 @@ module nicModule 'modules/nic.bicep' = {
   params: {
     vmName: vmName
     subnetId: subnetId
-    publicIpId: publicIpId
+    publicIpId: ''
     location: location
     nsgId: nsgModule.outputs.nsgId
     tags: tags
