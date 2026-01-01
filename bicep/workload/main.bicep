@@ -19,19 +19,9 @@ module nsgModule 'modules/nsg-app.bicep' = {
     location: location
   }
 }
-module nicModule 'modules/nic.bicep' = {
-  name: 'deployNic-${vmName}'
-  params: {
-    vmName: vmName
-    subnetId: subnetId
-    publicIpId: ''
-    location: location
-    nsgId: nsgModule.outputs.nsgId
-    tags: tags
-  }
-}
 
-module publicIpModule 'modules/publicIP.bicep' = if (empty(publicIpId)) {
+
+module publicIpModule 'modules/publicIP.bicep' = {
   name: 'deployPublicIp-${vmName}'
   params: {
     publicIpName: '${vmName}-publicip'
@@ -39,11 +29,26 @@ module publicIpModule 'modules/publicIP.bicep' = if (empty(publicIpId)) {
   }
 }
 
+module nicModule 'modules/nic.bicep' = {
+  name: 'deployNic-${vmName}'
+  params: {
+    vmName: vmName
+    subnetId: subnetId
+    publicIpId: empty(publicIpId)
+      ? publicIpModule.outputs.publicIpId
+      : publicIpId
+    location: location
+    nsgId: nsgModule.outputs.nsgId
+    tags: tags
+  }
+}
+
+
 module vmModule 'modules/vm.bicep' = {
   name: 'deployVm-${vmName}'
   params: {
     vmName: vmName
-    vmSize: 'Standard_B2s'
+    vmSize: 'Standard_D2s_v3'
     storageNameOut: storageNameOut
     nicId: nicModule.outputs.nicId
     location: location
