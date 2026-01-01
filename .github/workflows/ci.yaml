@@ -82,4 +82,3 @@ jobs:
           az deployment group what-if \
             --resource-group rg-workload-dev \
             --template-file ./bicep/workload/main.bicep
-    
